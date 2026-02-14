@@ -105,6 +105,7 @@ int main() {
         }
         if(valid){
             generateAnswer(input,p);
+            break;
         }
     }
     for(auto a : ans){

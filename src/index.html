@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="./output.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="p-5">
+        <h1 class ="text-center text-3xl">
+            LinkedIn N - Quenns Solver
+        </h1>
+        <div class="description">
+            <div>This is solver for N - Quenns problem from LinkedIn!</div>
+            <div>Please input the grid layout using alphabet (from A - Z)</div>
+        </div>
+        <form action="" method ="get" class = "input-form"> 
+            <div class="type-input">
+                <label for="text-input">
+                    Enter the grid layout
+                </label>
+                <div>
+               <textarea
+                id = "text-input"
+                class="w-64 h-64 p-3 border border-gray-300 rounded-lg 
+                        focus:outline-none focus:ring-2 focus:ring-blue-500 
+                        resize-none"></textarea>
+            </div>
+        </form>
+        <button id="start-button" type ="button" class="bg-sky-500 hover:bg-sky-700 rounded-lg px-4 py-3">START!</button>
+        <div id="grid-container" class="flex w-full justify-center">
+            <div id = "grids" class="grid w-64">
+
+            </div>
+
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
