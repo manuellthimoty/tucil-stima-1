@@ -6,32 +6,38 @@
     <title>Document</title>
     <link href="./output.css" rel="stylesheet">
 </head>
-<body>
-
+<body class = "bg-sky-950">
     <div class="p-5">
         <h1 class ="text-center text-3xl">
             LinkedIn N - Quenns Solver
         </h1>
         <div class="description">
-            <div>This is solver for N - Quenns problem from LinkedIn!</div>
-            <div>Please input the grid layout using alphabet (from A - Z)</div>
+            <div class="font-mono text-sky-200">This is solver for N - Quenns problem from LinkedIn!</div>
+            <div class="text-white">Please input the grid layout using alphabet (from A - Z)</div>
         </div>
         <form action="" method ="get" class = "input-form"> 
             <div class="type-input">
                 <label for="text-input">
-                    Enter the grid layout
+                    <div class="text-white">Enter the grid layout</div>
                 </label>
                 <div>
                <textarea
                 id = "text-input"
                 class="w-64 h-64 p-3 border border-gray-300 rounded-lg 
                         focus:outline-none focus:ring-2 focus:ring-blue-500 
-                        resize-none"></textarea>
+                        resize-none text-white"></textarea>
             </div>
         </form>
         <button id="start-button" type ="button" class="bg-sky-500 hover:bg-sky-700 rounded-lg px-4 py-3">START!</button>
-        <div id="grid-container" class="flex w-full justify-center">
-            <div id = "grids" class="grid w-64">
+        <div id="grid-container" class="m-10 flex w-full justify-center">
+            <div id = "grids" class="grid w-[20vw]">
+
+            </div>
+
+        </div>
+
+        <div id="grid-container" class="m-10 flex w-full justify-center">
+            <div id = "answer-grids" class="grid w-[20vw]">
 
             </div>
 
