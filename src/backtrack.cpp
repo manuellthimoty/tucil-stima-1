@@ -50,7 +50,7 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    n = 9;
+    cin >> n;
     for(int i = 1 ; i <= n ; i++){
         arr.push_back(i);
         used.push_back(false);
