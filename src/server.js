@@ -12,6 +12,8 @@ app.get("/solve",(req,res) =>{
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     const childProcess = spawn('./backtrack.exe');
+    // const childProcess = spawn('./pure-bruteforce.exe');1
+
     let output = "";
     let err = "";
     let lastSentLength = 0;

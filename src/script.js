@@ -18,21 +18,27 @@ const setN = () => {
     n = cur;
 }
 
+let numIt = 0;
+let time = 0;
+let curPar = 0;
 const parseInput = () => {
     const text = textInput.value;
     let curcheck = 0;
-    
-    for(let i = 0; i < n; i++){
-        inputArr[i] = [];
-        for(let j = 0; j < n; j++){
-            inputArr[i][j] = text[curcheck];
-            curcheck++;
-        }
-        if(i < n - 1 && text[curcheck] !== '\n'){
+    valid = true;
+    const lines = text.split('\n');
+    if(lines.length !== n){
+        valid = false;
+        return;
+    }
+    for(let i = 0 ; i < n ; i++){
+        if(lines[i].length !== n){
             valid = false;
-            break;
+            return;
         }
-        curcheck++; // skip newline character
+        inputArr[i] = [];
+        for(let j = 0 ; j < n ; j++){
+            inputArr[i][j] = lines[i][j];
+        }
     }
 }
 const setGrids = () => {
@@ -96,24 +102,44 @@ function liveCalc(){
     const evtSrc = new EventSource(
         `http://localhost:3000/solve?input=${encodeURIComponent(textInput.value)}&n=${n}`
     )
+    
     evtSrc.onmessage = (event) => {
         try{
             const data = JSON.parse(event.data);
+            let foundnum = false;
             if(data.progress) {
                 acc += data.progress;
                 let lines = acc.split('\n').filter(line => line.trim() !== '');
+                
                 if(lines.length >=n){
+                    
                     const curRes = lines.slice(-n);
-                    console.log(curRes);
-                    generateLiveGrid(curRes);
+                    let num1 = Number(curRes[n-3].trim());
+                    let num2 = Number(curRes[n-2].trim());
+                    let num3 = Number(curRes[n-1].trim());
+                    if(!isNaN(num1) && !isNaN(num2)){
+                        numIt = num1;
+                        time = num2;
+                        if(num3 == 1) found = true;
+                        else found = false;
+
+                    }
+                    else{
+                        console.log(curRes);
+                        generateLiveGrid(curRes);
+                    }
                 }
             }
             if(data.success){
-                finalResult = data.result.split('\r\n').filter(line => line !== '');
-                finalResult = finalResult.slice(-n);
-                generateGridAns();
-                generateQueenPos();
-                evtSrc.close();
+                if(!foundnum){
+                    finalResult = data.result.split('\r\n').filter(line => line !== '');
+                    finalResult = finalResult.slice(-n-3);
+                    finalResult = finalResult.slice(0,n);
+                    
+                    generateGridAns();
+                    generateQueenPos();
+                    evtSrc.close();
+                }
             }
             else if(data.error){
                 console.timeLog('blom aman');
@@ -194,11 +220,17 @@ startButton.addEventListener("click", (e) =>{
     e.preventDefault();
     setN();
     parseInput();
-    setGrids();
-    generateColorMap();
-    generateGrid();
-    // await sendInput();
-    generateGridAns();
-    liveCalc();
-    // generateQueenPos();
+    if(!valid){
+        alert('Ukuran ga valid');
+    }
+    else{
+        setGrids();
+        generateColorMap();
+        generateGrid();
+        // await sendInput();
+        generateGridAns();
+        liveCalc();
+        // generateQueenPos();
+    }
+
 })
