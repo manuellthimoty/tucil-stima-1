@@ -4,18 +4,29 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.post("/solve",(req,res) =>{
-    const { input, n} = req.body;
-    const childProcess = spawn('./backtrack.exe');
+app.get("/solve",(req,res) =>{
+    const { input, n} = req.query;
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
+    const childProcess = spawn('./backtrack.exe');
     let output = "";
     let err = "";
+    let last = 0;
 
     childProcess.stdin.write(n + "\n" + input);
     childProcess.stdin.end();
 
     childProcess.stdout.on('data', (data) => {
         output += data.toString();
+        const newdata = output.substring(last);
+        if(newdata.length > 0) {
+            res.write(`data: ${JSON.stringify({ progress: newdata })}\n\n`);
+            last = newdata.length;
+        }
+        
     });
 
     childProcess.stderr.on('data',(data) => {
@@ -23,14 +34,13 @@ app.post("/solve",(req,res) =>{
     });
 
     childProcess.on('close', (c) => {
-        if (c == 0) res.json({
-            success : true,
-            result: output
-        });
-        else res.json({
-            success : false,
-            error : err
-        });
+        if (c == 0) {
+            res.write(`data: ${JSON.stringify({ success: true, result: output })}\n\n`);
+        }
+        else {
+            res.write(`data: ${JSON.stringify({ success: false, error: err })}\n\n`);
+        }
+        res.end();
     });
 })
 
