@@ -91,6 +91,63 @@ async function sendInput() {
     }
 }
 
+function liveCalc(){
+    let acc = "";
+    const evtSrc = new EventSource(
+        `http://localhost:3000/solve?input=${encodeURIComponent(textInput.value)}&n=${n}`
+    )
+    evtSrc.onmessage = (event) => {
+        try{
+            const data = JSON.parse(event.data);
+            if(data.progress) {
+                // Update live grid setiap iterasi - hanya hapus queens, jangan regenerate
+                acc += data.progress;
+                let lines = acc.split('\n').filter(line => line.trim() !== '');
+                if(lines.length >=n){
+                    const curRes = lines.slice(-n);
+                    console.log(curRes);
+                    generateLiveGrid(curRes);
+                }
+            }
+            if(data.success){
+                finalResult = data.result.split('\r\n').filter(line => line !== '');
+                finalResult = finalResult.slice(-n);
+                generateGridAns();
+                generateQueenPos();
+                evtSrc.close();
+            }
+            else if(data.error){
+                console.timeLog('blom aman');
+                evtSrc.close();
+            }
+        }
+        catch (e){
+            console.error(e);
+        }
+    }
+
+    evtSrc.onerror = (event) => {
+        console.error(event);
+        evtSrc.close();
+    }
+}
+
+const generateLiveGrid = (curr) => {
+    document.querySelectorAll('#answer-grids img').forEach(img => img.remove());
+    if(curr && curr.length > 0){
+        for(let i = 0 ; i < n ; i++){
+                for(let j = 0 ; j < n ; j++){
+                    if(curr[i][j] == "#"){
+                        let curElmt = document.getElementById('ans' + (i) + j);
+                        let quennimg = document.createElement('img');
+                        quennimg.src = "light.png";
+                        curElmt.appendChild(quennimg);
+                    }
+                }
+            }
+        }
+    }
+
 const generateGridAns = () => {
     if (found){
         ansGrids.innerHTML = "";
@@ -98,7 +155,7 @@ const generateGridAns = () => {
         for(let i = 0; i < n; i++){
             for(let j = 0; j < n; j++){
                 const newAnsElmt = document.createElement("div");
-                newAnsElmt.id = 'ans' + i + j;
+                newAnsElmt.id = 'ans' + (i) + j;
                 newAnsElmt.className = "border aspect-square";
                 newAnsElmt.style.backgroundColor = colorMap.get(inputArr[i][j]);
                 ansGrids.appendChild(newAnsElmt);
@@ -108,11 +165,12 @@ const generateGridAns = () => {
 }
 
 const generateQueenPos = () => {
-    if(found) {
-        for(let i = 1 ; i <= n ; i++){
+    if(found && finalResult) {
+        
+        for(let i = 0 ; i < finalResult.length ; i++){
             for(let j = 0 ; j < n ; j++){
                 if(finalResult[i][j] == "#"){
-                    let curElmt = document.getElementById('ans' + (i-1) + j);
+                    let curElmt = document.getElementById('ans' + (i) + j);
                     let quennimg = document.createElement('img');
                     quennimg.src = "light.png";
                     curElmt.appendChild(quennimg);
@@ -122,14 +180,15 @@ const generateQueenPos = () => {
     }
 }
 
-startButton.addEventListener("click",async (e) =>{
+startButton.addEventListener("click", (e) =>{
     e.preventDefault();
     setN();
     parseInput();
     setGrids();
     generateColorMap();
     generateGrid();
-    await sendInput();
+    // await sendInput();
     generateGridAns();
-    generateQueenPos();
+    liveCalc();
+    // generateQueenPos();
 })
