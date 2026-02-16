@@ -14,17 +14,17 @@ app.get("/solve",(req,res) =>{
     const childProcess = spawn('./backtrack.exe');
     let output = "";
     let err = "";
-    let last = 0;
+    let lastSentLength = 0;
 
     childProcess.stdin.write(n + "\n" + input);
     childProcess.stdin.end();
 
     childProcess.stdout.on('data', (data) => {
         output += data.toString();
-        const newdata = output.substring(last);
+        const newdata = output.substring(lastSentLength);
         if(newdata.length > 0) {
             res.write(`data: ${JSON.stringify({ progress: newdata })}\n\n`);
-            last = newdata.length;
+            lastSentLength = output.length;
         }
         
     });

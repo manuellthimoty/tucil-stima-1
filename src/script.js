@@ -100,7 +100,6 @@ function liveCalc(){
         try{
             const data = JSON.parse(event.data);
             if(data.progress) {
-                // Update live grid setiap iterasi - hanya hapus queens, jangan regenerate
                 acc += data.progress;
                 let lines = acc.split('\n').filter(line => line.trim() !== '');
                 if(lines.length >=n){
@@ -133,18 +132,29 @@ function liveCalc(){
 }
 
 const generateLiveGrid = (curr) => {
-    document.querySelectorAll('#answer-grids img').forEach(img => img.remove());
+    const existingImgs = document.querySelectorAll('#answer-grids img');
+    existingImgs.forEach(img => img.remove());
+
+    if(!found || !Array.isArray(curr) || curr.length === 0) return;
+
     if(curr && curr.length > 0){
         for(let i = 0 ; i < n ; i++){
-                for(let j = 0 ; j < n ; j++){
-                    if(curr[i][j] == "#"){
-                        let curElmt = document.getElementById('ans' + (i) + j);
-                        let quennimg = document.createElement('img');
+            const curLine = curr[i];
+            for(let j = 0 ; j < n ; j++){
+                if(curLine[j] === "#"){
+                    const elmtId = 'ans' + i + j;
+                    const curElmt = document.getElementById(elmtId);
+                    if(curElmt){
+                        const oldimg = curElmt.querySelector('img');
+                        if(oldimg) oldimg.remove();
+
+                        const quennimg = document.createElement('img');
                         quennimg.src = "light.png";
                         curElmt.appendChild(quennimg);
                     }
                 }
             }
+        }
         }
     }
 
