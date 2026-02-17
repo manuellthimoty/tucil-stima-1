@@ -61,3 +61,6 @@ Anda bisa memilih apakah mau input via uploading file atau langsung type di text
 Anda bisa memilih frekuensi iterasi Live Update.
 ### Toggle Optimization
 Anda bisa memilih apakah Anda ingin mempercepat algoritma atau tidak.
+
+## Author
+### Manuel Thimoty Silalahi (13524102)
