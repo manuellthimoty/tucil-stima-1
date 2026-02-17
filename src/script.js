@@ -6,6 +6,45 @@ const textInput = document.getElementById("text-input");
 const startButton = document.getElementById("start-button");
 const grids = document.getElementById("grids");
 const ansGrids = document.getElementById("answer-grids");
+const statusId = document.getElementById("status");
+const iter = document.getElementById("iter");
+const totalTime = document.getElementById("time");
+const toggleCheckBox = document.getElementById("toggle");
+const stopButton = document.getElementById("stop-button");
+const fileInput = document.getElementById("file_input");
+
+
+
+let method = "";
+let evtSrc = null;
+let inputValid = true;
+
+fileInput.addEventListener("change",(e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const res = e.target.result;
+        textInput.value = "";
+        textInput.value = res;
+    };
+    reader.readAsText(file);
+
+})
+
+
+function isOnlyLetters(str) {
+  return /^[a-zA-Z]+$/.test(str);
+}
+
+toggleCheckBox.addEventListener("change", (e) => {
+    if(e.target.checked) {
+        method = "optimize";
+    } else {
+        method = "naive";
+    }
+});
 
 let valid = true;
 let found = true;
@@ -22,8 +61,8 @@ let numIt = 0;
 let time = 0;
 let curPar = 0;
 const parseInput = () => {
+    inputValid = true;
     const text = textInput.value;
-    let curcheck = 0;
     valid = true;
     const lines = text.split('\n');
     if(lines.length !== n){
@@ -31,7 +70,7 @@ const parseInput = () => {
         return;
     }
     for(let i = 0 ; i < n ; i++){
-        if(lines[i].length !== n){
+        if(lines[i].length !== n || !isOnlyLetters(lines[i])){
             valid = false;
             return;
         }
@@ -99,8 +138,8 @@ async function sendInput() {
 
 function liveCalc(){
     let acc = "";
-    const evtSrc = new EventSource(
-        `http://localhost:3000/solve?input=${encodeURIComponent(textInput.value)}&n=${n}`
+    evtSrc = new EventSource(
+        `http://localhost:3000/solve?input=${encodeURIComponent(textInput.value)}&n=${n}&method=${method}`
     )
     
     evtSrc.onmessage = (event) => {
@@ -138,6 +177,16 @@ function liveCalc(){
                     
                     generateGridAns();
                     generateQueenPos();
+                    if(found){
+                        statusId.innerText = "FOUND !";
+                        statusId.style.color = "var(--color-green-200)";
+                    }
+                    else{
+                        statusId.innerText = "NOT FOUND !";
+                        statusId.style.color = "var(--color-red-200)";
+                    }
+                    iter.innerText = "Number of Iterations: " + numIt + " Iterations";
+                    totalTime.innerText = "Total time taken : " + time + " ms";
                     evtSrc.close();
                 }
             }
@@ -215,22 +264,33 @@ const generateQueenPos = () => {
         }
     }
 }
-
+stopButton.addEventListener("click",()=> {
+    if(evtSrc){
+        evtSrc.close();
+        evtSrc = null;
+    }
+})
+let end = false;
 startButton.addEventListener("click", (e) =>{
     e.preventDefault();
+    if(evtSrc){
+        evtSrc.close();
+        evtSrc = null;
+    }
     setN();
     parseInput();
     if(!valid){
-        alert('Ukuran ga valid');
+        alert('Invalid Input');
     }
     else{
         setGrids();
         generateColorMap();
-        generateGrid();
+        // generateGrid();
         // await sendInput();
         generateGridAns();
         liveCalc();
         // generateQueenPos();
+        
     }
 
 })

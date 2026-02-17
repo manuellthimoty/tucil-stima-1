@@ -1,17 +1,26 @@
-const { spawn,exec } = require('node:child_process');
+const { spawn } = require('node:child_process');
+const path = require('path');
 const express = require("express");
 const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.get("/solve",(req,res) =>{
-    const { input, n} = req.query;
+    const { input, n, method} = req.query;
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Access-Control-Allow-Origin', '*');
-
-    const childProcess = spawn('./backtrack.exe');
+    let exepath;
+    if(method === 'optimize') {
+        exepath = path.join(__dirname, '../bin/optimize.exe');
+        } 
+    else {
+            exepath = path.join(__dirname, '../bin/naive.exe');
+        }
+    
+    let childProcess;
+    childProcess = spawn(exepath);
     // const childProcess = spawn('./pure-bruteforce.exe');1
 
     let output = "";
