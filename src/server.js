@@ -3,10 +3,13 @@ const path = require('path');
 const express = require("express");
 const cors = require("cors");
 const app = express();
+
+
 app.use(express.json());
 app.use(cors());
+
 app.get("/solve",(req,res) =>{
-    const { input, n, method} = req.query;
+    const { input, n, method, slider} = req.query;
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -21,13 +24,12 @@ app.get("/solve",(req,res) =>{
     
     let childProcess;
     childProcess = spawn(exepath);
-    // const childProcess = spawn('./pure-bruteforce.exe');1
 
     let output = "";
     let err = "";
     let lastSentLength = 0;
 
-    childProcess.stdin.write(n + "\n" + input);
+    childProcess.stdin.write(n + "\n" + input + "\n" + slider);
     childProcess.stdin.end();
 
     childProcess.stdout.on('data', (data) => {

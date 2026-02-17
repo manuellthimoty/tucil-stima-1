@@ -11,7 +11,7 @@ bool solusi = false;
 int it = 0;
 int countsleep = 0;
 int sleepduration = 0;
-
+int every = 0;
 
 bool cek(int x, int y){
     if(columnUsed[y]) return false;
@@ -24,7 +24,7 @@ bool cek(int x, int y){
 
 void solve(int x = 0){
     it ++;
-    if(it % 100 == 0){
+    if(it % every == 0){
         for(int i = 0 ; i < n ; i++){
             for(int j = 0 ; j < n ; j++){
                 if(used[i][j]) cout << "#";
@@ -80,6 +80,7 @@ int main(){
             used[i][j] = false;
         }
     }
+    cin >> every;
 
     solve();
     cout << endl;

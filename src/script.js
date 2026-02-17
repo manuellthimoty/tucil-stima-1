@@ -1,5 +1,6 @@
 let inputArr = []
 let colorMap = new Map();
+let sliderVal = 1000;
 var n;
 
 const textInput = document.getElementById("text-input");
@@ -12,12 +13,29 @@ const totalTime = document.getElementById("time");
 const toggleCheckBox = document.getElementById("toggle");
 const stopButton = document.getElementById("stop-button");
 const fileInput = document.getElementById("file_input");
+const slider = document.getElementById("iter-slider");
+const displaySlide = document.getElementById("iter-display");
 
-
+let uniqueColor = new Set();
 
 let method = "";
 let evtSrc = null;
 let inputValid = true;
+
+let valid = true;
+let found = true;
+var finalResult;
+
+let numIt = 0;
+let time = 0;
+let curPar = 0;
+
+// pengatur value slider
+slider.addEventListener("input",(e) => {
+    displaySlide.innerText = "Every " + e.target.value + " iterations";
+    sliderVal = e.target.value;
+})
+
 
 fileInput.addEventListener("change",(e) => {
     const file = e.target.files[0];
@@ -33,7 +51,7 @@ fileInput.addEventListener("change",(e) => {
 
 })
 
-
+// ngecek apakah input hanya contain string
 function isOnlyLetters(str) {
   return /^[a-zA-Z]+$/.test(str);
 }
@@ -46,9 +64,6 @@ toggleCheckBox.addEventListener("change", (e) => {
     }
 });
 
-let valid = true;
-let found = true;
-var finalResult;
 const setN = () => {
     let cur = 0;
     while(textInput.value[cur] !== '\n' && cur < textInput.value.length){
@@ -57,9 +72,6 @@ const setN = () => {
     n = cur;
 }
 
-let numIt = 0;
-let time = 0;
-let curPar = 0;
 const parseInput = () => {
     inputValid = true;
     const text = textInput.value;
@@ -77,19 +89,14 @@ const parseInput = () => {
         inputArr[i] = [];
         for(let j = 0 ; j < n ; j++){
             inputArr[i][j] = lines[i][j];
+            uniqueColor.add(inputArr[i][j]);
         }
     }
 }
 const setGrids = () => {
     grids.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
 }
-const printInput = (arr) =>{
-    for(let i = 0 ; i < arr.length ; i++){
-        for(let j = 0 ; j < arr[0].length ; j++){
-            console.log(arr[i][j]);
-        }
-    }
-}
+
 
 const generateColorMap = () => {
     for(let i = 0; i < n; i++){
@@ -139,7 +146,7 @@ async function sendInput() {
 function liveCalc(){
     let acc = "";
     evtSrc = new EventSource(
-        `http://localhost:3000/solve?input=${encodeURIComponent(textInput.value)}&n=${n}&method=${method}`
+        `http://localhost:3000/solve?input=${encodeURIComponent(textInput.value)}&n=${n}&method=${method}&slider=${sliderVal}`
     )
     
     evtSrc.onmessage = (event) => {
@@ -149,9 +156,25 @@ function liveCalc(){
             if(data.progress) {
                 acc += data.progress;
                 let lines = acc.split('\n').filter(line => line.trim() !== '');
-                
-                if(lines.length >=n){
-                    
+                if( n <= 3){
+                    const curRes = lines.slice(-3);
+                    let num1 = Number(curRes[0].trim());
+                    let num2 = Number(curRes[1].trim());
+                    let num3 = Number(curRes[2].trim());
+                    if(!isNaN(num1) && !isNaN(num2)){
+                        numIt = num1;
+                        time = num2;
+                        if(num3 == 1) found = true;
+                        else found = false;
+
+                    }
+                    else{
+                        console.log(curRes);
+                        generateLiveGrid(curRes);
+                    }
+                }
+                else if(lines.length >=n){
+
                     const curRes = lines.slice(-n);
                     let num1 = Number(curRes[n-3].trim());
                     let num2 = Number(curRes[n-2].trim());
@@ -272,6 +295,7 @@ stopButton.addEventListener("click",()=> {
 })
 let end = false;
 startButton.addEventListener("click", (e) =>{
+    uniqueColor.clear();
     e.preventDefault();
     if(evtSrc){
         evtSrc.close();
@@ -285,11 +309,12 @@ startButton.addEventListener("click", (e) =>{
     else{
         setGrids();
         generateColorMap();
-        // generateGrid();
-        // await sendInput();
+        if(uniqueColor.size !== n){
+            alert("Banyak warna unik tidak sesuai");
+            return;
+        }
         generateGridAns();
         liveCalc();
-        // generateQueenPos();
         
     }
 
