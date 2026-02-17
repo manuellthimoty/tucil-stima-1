@@ -247,7 +247,7 @@ const generateLiveGrid = (curr) => {
                         if(oldimg) oldimg.remove();
 
                         const quennimg = document.createElement('img');
-                        quennimg.src = "light.png";
+                        quennimg.src = "../assets/light.png";
                         curElmt.appendChild(quennimg);
                     }
                 }
@@ -280,7 +280,7 @@ const generateQueenPos = () => {
                 if(finalResult[i][j] == "#"){
                     let curElmt = document.getElementById('ans' + (i) + j);
                     let quennimg = document.createElement('img');
-                    quennimg.src = "light.png";
+                    quennimg.src = "../assets/light.png";
                     curElmt.appendChild(quennimg);
                 }
             }
@@ -296,6 +296,7 @@ stopButton.addEventListener("click",()=> {
 let end = false;
 startButton.addEventListener("click", (e) =>{
     uniqueColor.clear();
+    found = true;
     e.preventDefault();
     if(evtSrc){
         evtSrc.close();

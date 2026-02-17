@@ -98,7 +98,6 @@ void solve(int x = 0){
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    auto start =  std::chrono::high_resolution_clock::now();
     cin >> n;
 
     for (int i = 0; i < n; i++){
@@ -110,11 +109,11 @@ int main(){
         }
     }
     cin >> every;
-
+    auto start =  std::chrono::high_resolution_clock::now();
     solve();
-    cout << endl;
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    cout << endl;
 
     cout << it << endl;
     cout.flush();

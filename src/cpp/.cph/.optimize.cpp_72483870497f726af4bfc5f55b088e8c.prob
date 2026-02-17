@@ -1,0 +1,1 @@
+{"name":"Local: optimize","url":"d:\\stima\\tucil-stima-1\\src\\cpp\\optimize.cpp","tests":[{"id":1771345994839,"input":"2\nAB\nAB\n1000","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\stima\\tucil-stima-1\\src\\cpp\\optimize.cpp","group":"local","local":true}
