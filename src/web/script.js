@@ -51,8 +51,8 @@ function download(file, text) {
 
 document.getElementById("download-button")
             .addEventListener("click", function () {
-                let text = "";
-                for(let i = 0 ; i < n ; i++){
+                let text = finalResult[0].trim() + "\n";
+                for(let i = 1 ; i < n ; i++){
                     text += finalResult[i].trim();
                     text+= "\n";
                 }                   
@@ -232,8 +232,8 @@ function liveCalc(){
                         statusId.innerText = "NOT FOUND !";
                         statusId.style.color = "var(--color-red-200)";
                     }
-                    iter.innerText = "Number of Iterations: " + numIt + " Iterations";
-                    totalTime.innerText = "Total time taken : " + time + " ms";
+                    iter.innerText =  numIt + " Iterations";
+                    totalTime.innerText = time + " ms";
                     evtSrc.close();
                 }
             }
