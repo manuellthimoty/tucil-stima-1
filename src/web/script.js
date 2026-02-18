@@ -15,6 +15,7 @@ const stopButton = document.getElementById("stop-button");
 const fileInput = document.getElementById("file_input");
 const slider = document.getElementById("iter-slider");
 const displaySlide = document.getElementById("iter-display");
+const downloadButton = document.getElementById("download-button");
 
 let uniqueColor = new Set();
 
@@ -36,6 +37,29 @@ slider.addEventListener("input",(e) => {
     sliderVal = e.target.value;
 })
 
+function download(file, text) {
+            let element = document.createElement('a');
+            element.setAttribute('href',
+                'data:text/plain;charset=utf-8, '
+                + encodeURIComponent(text));
+            element.setAttribute('download', file);
+            document.body.appendChild(element);
+            element.click();
+
+            document.body.removeChild(element);
+        }
+
+document.getElementById("download-button")
+            .addEventListener("click", function () {
+                let text = "";
+                for(let i = 0 ; i < n ; i++){
+                    text += finalResult[i].trim();
+                    text+= "\n";
+                }                   
+                let filename = "hasil.txt";
+
+                download(filename, text);
+            }, false);  
 
 fileInput.addEventListener("change",(e) => {
     const file = e.target.files[0];
