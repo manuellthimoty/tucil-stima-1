@@ -46,10 +46,9 @@ g++ src/cpp/optimized.cpp -o bin/optimize
 ```bash
 node server.js
 ```
-### Buka Browser dan akses
+### Buka Browser dan akses file html dibawah dengan live server.
 ```bash
-cd src
-http://localhost:3000
+web/index.html
 ```
 
 # Menjalankan Solver
